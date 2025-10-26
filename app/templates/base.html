@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/reset.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script defer src="/static/js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
+    <title>Empathic IDE</title>
+</head>
+
+<body>
+    <main class="flex-col">
+        <hgroup id="top-bar">
+            <h1>Empathic IDE</h1>
+            <div class="spacer"></div>
+            <button id="open">Open</button>
+            <button id="save">Save</button>
+            <button id="compile">Compile</button>
+            <button id="run">Run</button>
+        </hgroup>
+        <div class="flex-row">
+            <div id="chat">
+                <!-- TODO: Scrolling when we have a lot more messages -->
+                <div class="chat-message">
+                    <div class="chat-message-author">Chatbot</div>
+                    <div class="chat-message-content">Hello</div>
+                </div>
+                <div class="spacer"></div>
+                <div class="enter-message">
+                    <textarea class="enter-message-textarea" id="message-textarea"></textarea>
+                    <button id="send">Send</button>
+                    <button id="set-api-key">Set API Key</button>
+                </div>
+            </div>
+            <div id="program">
+                <div id="editor">
+                </div>
+                <div id="terminal">
+                    <pre id="terminal-content"></pre>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+    <template id="template-chat-message">
+        <div class="chat-message">
+            <div class="chat-message-author">author</div>
+            <div class="chat-message-content">text</div>
+        </div>
+    </template>
+</body>
+
+</html>
