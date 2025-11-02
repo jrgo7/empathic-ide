@@ -9,7 +9,7 @@
 
 ## Installation and run script
 
-Ensure that `uv` is installed. Then:
+Ensure that `uv` is installed. Then, activate the virtual environment, and:
 
 > `uv run flask --app app run --debug`
 

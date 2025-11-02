@@ -14,18 +14,35 @@ require(['vs/editor/editor.main'], function () {
     })
 })
 
+async function addMessage(author, messageText) {
+    const chatMessageTemplate = document.getElementById("template-chat-message");
+    const chatHistoryDiv = document.getElementById("chat");
+    const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
+    chatMessageDiv.querySelector(".chat-message-author").textContent = author;
+    chatMessageDiv.querySelector(".chat-message-content").textContent = messageText;
+    const spacerDiv = chatHistoryDiv.querySelector('.spacer');
+    chatHistoryDiv.insertBefore(chatMessageDiv, spacerDiv);
+}
 
 document.querySelector('button#send').addEventListener("click", async function () {
-    // TODO: Add messages sent and received to frontend
     const editorText = window.editor.getValue()
     const textarea = document.querySelector('textarea#message-textarea')
     const messageText = textarea.value
     textarea.value = ''
     const config = {
         method: 'POST',
-        body: JSON.stringify({ editorText, messageText })
+        body: JSON.stringify({ message: messageText, code: editorText })
     }
-    const response = await fetch("/code/send", config)
+    const addMessageTask = addMessage("user", messageText);
+    const response = await fetch("/code/send", config);
+    const responseJson = await response.json();
+    const { acknowledgement, supportive_suggestion: supportiveSuggestion } = responseJson.reply;
+    await addMessageTask;
+    console.log(responseJson)
+    console.log(acknowledgement)
+    console.log(supportiveSuggestion)
+    await addMessage("bot", acknowledgement);
+    await addMessage("bot", supportiveSuggestion);
 })
 
 
