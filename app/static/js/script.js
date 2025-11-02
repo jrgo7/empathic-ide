@@ -53,16 +53,27 @@ document.querySelector('button#send').addEventListener("click", async function (
     await addMessage("bot", supportiveSuggestion);
 })
 
+const filePickerTypes = [{
+    description: 'C file',
+    accept: { 'text/plain': ['.c'] },
+}]
 
 document.querySelector('button#open').addEventListener("click", async function () {
-    // TODO: Open file
-    window.editor.setValue("Value set")
+    const [fileHandle] = await window.showOpenFilePicker({types: filePickerTypes});
+    const file = await fileHandle.getFile();
+    const content = await file.text();
+    window.editor.setValue(content);
 })
 
 
 document.querySelector('button#save').addEventListener("click", async function () {
-    // TODO: Save file
     const editorText = window.editor.getValue()
+    const handle = await showSaveFilePicker({types: filePickerTypes});
+    const blob = new Blob([editorText]);
+    const writableStream = await handle.createWritable();
+    await writableStream.write(blob);
+    await writableStream.close();
+
 })
 
 
