@@ -33,11 +33,15 @@ class EmpathicChatbotClient:
         )
 
     def respond(self, message: Request) -> Response:
+        print("RECEIVED REQUEST")
+        print(message)
         response = self.client.models.generate_content(
             model=self.model,
             config=self.config,
             contents=str(message),
         )
+        print("RECEIVED RESPONSE")
+        print(response.parsed)
         return response.parsed # type: ignore
 
 

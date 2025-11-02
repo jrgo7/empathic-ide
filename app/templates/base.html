@@ -32,7 +32,7 @@
                 <div class="enter-message">
                     <textarea class="enter-message-textarea" id="message-textarea"></textarea>
                     <button id="send">Send</button>
-                    <button id="set-api-key">Set API Key</button>
+                    <button id="open-api-key-modal">API Key</button>
                 </div>
             </div>
             <div id="program">
@@ -45,6 +45,22 @@
         </div>
         </div>
     </main>
+    <div id="modal-gemini-api-key" class="modal">
+        <div class="modal-content">
+            <h2>Set API Key</h2>
+            <p>
+                Please visit
+                <a href="https://aistudio.google.com/app/api-keys" target="_blank">Google AI Studio</a>
+                to create a Gemini API Key, then paste it in this text box:
+            </p>
+            <label for="api-key">API Key</label>
+            <input type="text" id="api-key-input" name="api-key">
+            <button id="close-api-key-modal">Cancel</button>
+            <button id="set-api-key">Set API Key</button>
+            <p>You may need to create a new project first.</p>
+            <p>Any name can work for the project and the key -- "Empathic IDE" would work best, though!</p>
+        </div>
+    </div>
     <template id="template-chat-message">
         <div class="chat-message">
             <div class="chat-message-author">author</div>

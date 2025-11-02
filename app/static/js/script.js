@@ -33,11 +33,19 @@ document.querySelector('button#send').addEventListener("click", async function (
         method: 'POST',
         body: JSON.stringify({ message: messageText, code: editorText })
     }
-    const addMessageTask = addMessage("user", messageText);
+    await addMessage("user", messageText);
     const response = await fetch("/code/send", config);
     const responseJson = await response.json();
+
+    if (response.status == 403) {
+        await addMessage(
+            "bot",
+            responseJson.error
+        );
+        return;
+    }
+
     const { acknowledgement, supportive_suggestion: supportiveSuggestion } = responseJson.reply;
-    await addMessageTask;
     console.log(responseJson)
     console.log(acknowledgement)
     console.log(supportiveSuggestion)
@@ -80,6 +88,33 @@ document.querySelector('button#run').addEventListener("click", async function ()
 })
 
 document.querySelector('button#set-api-key').addEventListener("click", async function () {
-    // TODO: Open a modal and save the API key somewhere.
-    // TODO: Also, load the API key if present (somewhere else in the code)
+    const apiKeyInput = document.getElementById('api-key-input');
+
+    const config = { method: "POST", body: JSON.stringify({ gemini_api_key: apiKeyInput.value }) };
+    const response = await fetch("/code/api-key", config);
+
+    const modal = document.getElementById('modal-gemini-api-key');
+    modal.classList.remove("modal-visible");
+})
+
+document.querySelector('button#open-api-key-modal').addEventListener("click", async function () {
+    const apiKeyInput = document.getElementById('api-key-input');
+    apiKeyInput.disabled = true;
+    apiKeyInput.value = "Checking if API key exists...";
+
+    const modal = document.getElementById('modal-gemini-api-key');
+    modal.classList.add("modal-visible");
+
+    const config = { method: 'GET' }
+    const response = await fetch("/code/api-key", config);
+    const responseJson = await response.json();
+    const geminiApiKey = responseJson.reply;
+
+    apiKeyInput.value = geminiApiKey;
+    apiKeyInput.disabled = false;
+})
+
+document.querySelector('button#close-api-key-modal').addEventListener("click", async function () {
+    modal = document.getElementById('modal-gemini-api-key');
+    modal.classList.remove("modal-visible");
 })
