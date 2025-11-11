@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/reset.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <script defer src="/static/js/script.js"></script>
+    <script defer src="/static/js/theme.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.33.0/min/vs/loader.js"></script>
     <title>Empathic IDE</title>
 </head>
@@ -16,6 +17,7 @@
         <hgroup id="top-bar">
             <h1>Empathic IDE</h1>
             <div class="spacer"></div>
+            <button id="toggle-theme">Toggle Theme</button>
             <button id="open">Open</button>
             <button id="save">Save</button>
             <button id="compile">Compile</button>
@@ -25,8 +27,10 @@
             <div id="chat">
                 <div id="chat-container">
                     <div class="chat-message">
-                        <div class="chat-message-author">Chatbot</div>
-                        <div class="chat-message-content">Hello</div>
+                        <div class="chat-message-author">Bot</div>
+                        <div class="chat-message-content">
+                            Hello! I am Empathicide, your helpful CCPROG1 tutoring bot.
+                        </div>
                     </div>
                 </div>
                 <div class="spacer"></div>
@@ -40,6 +44,7 @@
                 <div id="editor">
                 </div>
                 <div id="terminal">
+                    <span class="terminal-title">TERMINAL</span>
                     <pre id="terminal-content"></pre>
                 </div>
             </div>

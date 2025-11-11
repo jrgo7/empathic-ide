@@ -1,9 +1,54 @@
 /* General styles */
+:root {
+    /**
+    * We use Catppuccin Frappe and Catppuccin Latte for dark and light mode theming in the editor
+    * The specific color values used are retrieved from https://catppuccin.com/palette/
+    */
+
+    /* Light theme -- Catppuccin Latte */
+
+    --green: #40a02b;
+    --blue: #1e66f5;
+
+    /* Text, borders */
+    --text: #4c4f69;
+
+    --subtext-1: #5c5f77;
+    --subtext-0: #6c6f85;
+    --overlay-0: #9ca0b0;
+    --surface-0: #ccd0da;
+
+    /* Modal background */
+    --base: #eff1f5;
+
+    /* In-between */
+    --mantle: #e6e9ef;
+
+    /* Overall background color */
+    --crust: #dce0e8;
+
+    /* Dark variants -- Catppuccin Frappe */
+    --green-dark: #a6d189;
+    --blue-dark: #8caaee;
+    --text-dark: #c6d0f5;
+    --base-dark: #303446;
+    --overlay-0-dark: #737994;
+    --mantle-dark: #292c3c;
+    --crust-dark: #232634;
+}
 
 body {
     font-family: sans-serif;
     height: 100vh;
     overflow-y: hidden;
+
+    color: var(--text);
+    background-color: var(--crust);
+}
+
+body.dark-theme {
+    color: var(--text-dark);
+    background-color: var(--crust-dark);
 }
 
 h1,
@@ -19,13 +64,26 @@ p {
     margin-bottom: 1em;
 }
 
+a {
+    color: var(--blue);
+}
+
+.dark-theme a {
+    color: var(--blue-dark);
+}
+
 #top-bar {
     display: flex;
     align-items: center;
-    color: white;
-    background-color: darkgreen;
     margin-bottom: 1rem;
     padding: 1ch;
+    color: var(--base);
+    background-color: var(--green);
+}
+
+.dark-theme #top-bar {
+    color: var(--base-dark);
+    background-color: var(--green-dark);
 }
 
 #top-bar button {
@@ -71,27 +129,41 @@ main {
 }
 
 .chat-message-content {
-    background-color: whitesmoke;
+    background-color: var(--base);
     border-radius: 16px;
     margin: 1rem 1ch;
     padding: 1rem 1ch;
 }
 
+.dark-theme .chat-message-content {
+    background-color: var(--base-dark);
+}
+
 .enter-message {
     margin: 1rem 2ch;
-    border-top: 1px solid gray;
+    border-top: 1px solid var(--text);
     padding-top: 1rem;
+}
+
+.dark-theme .enter-message {
+    border-top-color: var(--text-dark);
 }
 
 .enter-message-textarea {
     width: 100%;
     border: 0;
-    background-color: whitesmoke;
     border-radius: 16px;
     padding: 16px 0;
     margin-bottom: 1rem;
     resize: none;
     font-family: sans-serif;
+    color: var(--text);
+    background-color: var(--base);
+}
+
+.dark-theme .enter-message-textarea {
+    color: var(--text-dark);
+    background-color: var(--base-dark);
 }
 
 label {
@@ -102,15 +174,22 @@ input[type=text] {
     display: block;
     width: 100%;
     border: 0;
-    background-color: whitesmoke;
     border-radius: 16px;
     margin-top: 1em;
     margin-bottom: 1em;
     padding: 1em 0ch;
+    color: var(--text);
+    background-color: var(--base);
+}
+
+.dark-theme input[type=text] {
+    color: var(--text-dark);
+    background-color: var(--base-dark);
 }
 
 input#api-key-input {
     text-align: center;
+    font-size: large;
 }
 
 button {
@@ -118,6 +197,13 @@ button {
     padding: 0.5rem 1ch;
     min-width: 16ch;
     border-radius: 16px;
+    color: var(--text);
+    background-color: var(--base);
+}
+
+.dark-theme button {
+    color: var(--text-dark);
+    background-color: var(--base-dark);
 }
 
 .spacer {
@@ -136,7 +222,7 @@ button {
     display: flex;
     flex-direction: column;
     margin: auto;
-    max-height: 65vh;
+    max-height: 70vh;
     margin-right: 1ch;
     flex-grow: 1;
 }
@@ -148,14 +234,23 @@ button {
     flex-grow: 1;
 }
 
-.monaco-editor,
-#terminal {
-    border-radius: 16px;
-    border: 1px solid gray;
+span.terminal-title {
+    font-family: sans-serif;
+    padding: 1ch;
+    color: var(--text);
 }
 
-.overflow-guard {
-    border-radius: 16px;
+.dark-theme span.terminal-title {
+    color: var(--text-dark);
+}
+
+#terminal {
+    background-color: var(--base);
+    margin-bottom: 1em;
+}
+
+.dark-theme #terminal {
+    background-color: var(--base-dark);
 }
 
 .slider {
@@ -180,8 +275,12 @@ button {
 }
 
 .modal-content {
-    background-color: gainsboro;
+    background-color: var(--mantle);
     border-radius: 8px;
     padding: 2em 4ch;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .modal-content {
+    background-color: var(--mantle-dark);
 }

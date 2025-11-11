@@ -14,6 +14,9 @@ require(['vs/editor/editor.main'], function () {
             enabled: false,
         },
     })
+    defineCatppuccinFrappeTheme()
+    defineCatppuccinLatteTheme()
+    monaco.editor.setTheme('catppuccin-latte')
 })
 
 async function addMessage(author, messageText) {
@@ -61,7 +64,7 @@ const filePickerTypes = [{
 }]
 
 document.querySelector('button#open').addEventListener("click", async function () {
-    const [fileHandle] = await window.showOpenFilePicker({types: filePickerTypes});
+    const [fileHandle] = await window.showOpenFilePicker({ types: filePickerTypes });
     const file = await fileHandle.getFile();
     const content = await file.text();
     window.editor.setValue(content);
@@ -70,7 +73,7 @@ document.querySelector('button#open').addEventListener("click", async function (
 
 document.querySelector('button#save').addEventListener("click", async function () {
     const editorText = window.editor.getValue()
-    const handle = await showSaveFilePicker({types: filePickerTypes});
+    const handle = await showSaveFilePicker({ types: filePickerTypes });
     const blob = new Blob([editorText]);
     const writableStream = await handle.createWritable();
     await writableStream.write(blob);
