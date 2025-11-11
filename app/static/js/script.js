@@ -7,6 +7,7 @@ require(['vs/editor/editor.main'], function () {
         value: '',
         language: 'c',
         fontSize: 16,
+        fontFamily: "JetBrains Mono",
         roundedSelection: true,
         automaticLayout: true,
         fixedOverflowWidgets: true,
