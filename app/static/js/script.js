@@ -31,6 +31,19 @@ async function addMessage(author, messageText) {
     chatHistoryDiv.appendChild(chatMessageDiv);
 }
 
+
+async function addToTerminal(content) {
+    const terminal = document.getElementById("terminal-content");
+    if (Array.isArray(content)) {
+        content.forEach(line => {
+            terminal.textContent += line + "\n";
+        });
+    } else if (typeof content === 'string') {
+        terminal.textContent += content + "\n";
+    }
+    terminal.scrollTop = terminal.scrollHeight
+}
+
 document.querySelector('button#send').addEventListener("click", async function () {
     const editorText = window.editor.getValue()
     const textarea = document.querySelector('textarea#message-textarea')
@@ -100,9 +113,26 @@ document.querySelector('button#run').addEventListener("click", async function ()
     const editorText = window.editor.getValue()
     const config = {
         method: 'POST',
-        body: JSON.stringify({ editorText })
+        body: JSON.stringify({ code: editorText })
     }
     const response = await fetch("/code/run", config)
+    const responseJson = await response.json();
+
+    if (response.status == 403) {
+        await addMessage(
+            "bot",
+            responseJson.error
+        );
+        return;
+    }
+    const { acknowledgement, supportive_suggestion: supportiveSuggestion } = responseJson.reply;
+    console.log(responseJson)
+    console.log(acknowledgement)
+    console.log(supportiveSuggestion)
+    await addMessage("bot", acknowledgement);
+    await addMessage("bot", supportiveSuggestion);
+
+    await addToTerminal(responseJson.output)
 })
 
 document.querySelector('button#set-api-key').addEventListener("click", async function () {

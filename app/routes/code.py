@@ -4,9 +4,9 @@ from pathlib import Path
 import json
 
 from app.lib.gemini import EmpathicChatbotClient
+from app.lib.crunner import CRunner
 
 bp = Blueprint("code", __name__, url_prefix="/code")
-
 
 @bp.post("/api-key")
 def set_api_key():
@@ -84,4 +84,31 @@ def run():
     Compile code then run it.
     """
     data = json.loads(request.get_data().decode())
-    return {"message": "Not implemented"}
+    code = data["code"]
+    try:
+        assert code != ""
+    except AssertionError:
+        return {
+            "error": "It seems either your code is empty. Please fill it in so a program can run!"
+        }, 403
+        
+    try:
+        client = EmpathicChatbotClient()
+    except AssertionError:
+        return {
+            "error": "It seems you did not set the Gemini API key. Please do so by clicking on the API Key button."
+        }, 403
+    crunner = CRunner()
+    crunner.execute_all(code)
+    message = f"This is if the code compiled successfully or not: {crunner.success}\n"
+    message += f"Heres the output from the code of the user: {crunner.output}\n"
+
+    if "message_history" not in session.keys():
+        session["message_history"] = []
+    session["message_history"].append({"author": "user", "content": message})
+    message = EmpathicChatbotClient.Request(
+        message_history=session["message_history"], code=code
+    )
+
+    response = client.respond(message)
+    return {"reply": response, "output": crunner.output}

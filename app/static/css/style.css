@@ -201,6 +201,19 @@ button {
     border-radius: 8px;
     color: var(--text);
     background-color: var(--base);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .dark-theme button {
@@ -248,6 +261,8 @@ span.terminal-title {
 
 #terminal {
     background-color: var(--base);
+    height: 200px;
+    overflow-y: auto;
     margin-bottom: 1em;
 }
 
