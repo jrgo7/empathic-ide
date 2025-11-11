@@ -13,6 +13,7 @@ require(['vs/editor/editor.main'], function () {
         minimap: {
             enabled: false,
         },
+        "bracketPairColorization.enabled": true
     })
     defineCatppuccinFrappeTheme()
     defineCatppuccinLatteTheme()
