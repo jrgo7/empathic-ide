@@ -6,6 +6,8 @@ require(['vs/editor/editor.main'], function () {
     window.editor = monaco.editor.create(editorContainer, {
         value: '',
         language: 'c',
+        fontSize: 16,
+        roundedSelection: true,
         automaticLayout: true,
         fixedOverflowWidgets: true,
         minimap: {
@@ -16,12 +18,12 @@ require(['vs/editor/editor.main'], function () {
 
 async function addMessage(author, messageText) {
     const chatMessageTemplate = document.getElementById("template-chat-message");
-    const chatHistoryDiv = document.getElementById("chat");
+    const chatHistoryDiv = document.getElementById("chat-container");
     const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
     chatMessageDiv.querySelector(".chat-message-author").textContent = author;
     chatMessageDiv.querySelector(".chat-message-content").textContent = messageText;
-    const spacerDiv = chatHistoryDiv.querySelector('.spacer');
-    chatHistoryDiv.insertBefore(chatMessageDiv, spacerDiv);
+    // const spacerDiv = chatHistoryDiv.querySelector('.spacer');
+    chatHistoryDiv.appendChild(chatMessageDiv);
 }
 
 document.querySelector('button#send').addEventListener("click", async function () {
