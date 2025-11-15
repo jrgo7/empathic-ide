@@ -11,11 +11,14 @@ class EmpathicChatbotClient:
     class Request:
         message_history: list[dict[Literal["author", "content"], str]]
         code: str = ""
+        instruction: str | None = None
 
     @dataclass(frozen=True)
     class Response:
+        sentiment: Literal["celebratory", "encouraging", "inquisitive"]
         acknowledgement: str
         supportive_suggestion: str
+        error_explanation: str | None
 
     def __init__(self):
         dotenv.load_dotenv(".env")
@@ -25,8 +28,18 @@ class EmpathicChatbotClient:
         self.model = "gemini-2.5-flash"
         self.config = types.GenerateContentConfig(
             system_instruction=(
-                "You are an empathic tutor for CCPROG1, an introductory programming class"
-                " taught to first-year university students at De La Salle University."
+                "You are an empathic tutor for CCPROG1, an introductory programming class "
+                "taught to first-year university students at De La Salle University. "
+                "Your response must always be in a JSON format that adheres to the following schema:\n"
+                "{\n"
+                '  "sentiment": "celebratory" | "encouraging" | "inquisitive",\n'
+                '  "acknowledgement": "A statement that validates the user\'s feelings or situation.",\n'
+                '  "supportive_suggestion": "A clear, actionable next step or question to guide the student.",\n'
+                '  "error_explanation": "A simple, beginner-friendly explanation of a technical error, or null if there is no error."\n'
+                "}\n"
+                "Use 'celebratory' sentiment for successful code execution. "
+                "Use 'encouraging' for errors or when the user is struggling. "
+                "Use 'inquisitive' when asking a clarifying question."
             ),
             response_mime_type="application/json",
             response_schema=self.Response,

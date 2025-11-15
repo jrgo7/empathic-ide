@@ -108,28 +108,41 @@ document
 document
   .querySelector("button#run")
   .addEventListener("click", async function () {
-    // TODO: Display results
-    const editorText = window.editor.getValue();
-    const config = {
-      method: "POST",
-      body: JSON.stringify({ code: editorText }),
-    };
-    const response = await fetch("/code/run", config);
-    const responseJson = await response.json();
+    const runButton = this;
+    const buttonText = runButton.querySelector(".button-text");
+    const spinner = runButton.querySelector(".spinner");
 
-    if (response.status == 403) {
-      await addMessage("bot", responseJson.error);
-      return;
+    buttonText.style.display = "none";
+    spinner.style.display = "inline-block";
+    runButton.disabled = true;
+
+    try {
+      const editorText = window.editor.getValue();
+      const config = {
+        method: "POST",
+        body: JSON.stringify({ code: editorText }),
+      };
+      const response = await fetch("/code/run", config);
+      const responseJson = await response.json();
+
+      if (response.status == 403) {
+        await addMessage("bot", responseJson.error);
+        return;
+      }
+      const { acknowledgement, supportive_suggestion: supportiveSuggestion } =
+        responseJson.reply;
+      console.log(responseJson);
+      console.log(acknowledgement);
+      console.log(supportiveSuggestion);
+      await addMessage("bot", acknowledgement);
+      await addMessage("bot", supportiveSuggestion);
+
+      await addToTerminal(responseJson.output);
+    } finally {
+      buttonText.style.display = "inline-block";
+      spinner.style.display = "none";
+      runButton.disabled = false;
     }
-    const { acknowledgement, supportive_suggestion: supportiveSuggestion } =
-      responseJson.reply;
-    console.log(responseJson);
-    console.log(acknowledgement);
-    console.log(supportiveSuggestion);
-    await addMessage("bot", acknowledgement);
-    await addMessage("bot", supportiveSuggestion);
-
-    await addToTerminal(responseJson.output);
   });
 
 document
@@ -145,6 +158,13 @@ document
 
     const modal = document.getElementById("modal-gemini-api-key");
     modal.classList.remove("modal-visible");
+  });
+
+document
+  .querySelector("button#clear-console")
+  .addEventListener("click", async function () {
+    const terminal = document.getElementById("terminal-content");
+    terminal.textContent = "";
   });
 
 document

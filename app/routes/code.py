@@ -6,6 +6,8 @@ import json
 from app.lib.gemini import EmpathicChatbotClient
 from app.lib.crunner import CRunner
 
+
+
 bp = Blueprint("code", __name__, url_prefix="/code")
 
 @bp.post("/api-key")
@@ -40,15 +42,15 @@ def send():
     Send a message to the chatbot, and return its response.
     """
     data = json.loads(request.data.decode())
-    message = data["message"]
+    user_message = data["message"]
     code = data["code"]
 
     try:
-        assert message != ""
+        assert user_message != ""
         assert code != ""
     except AssertionError:
         return {
-            "error": "It seems either your message or code is empty. Please fill it in so I know what you want to discuss!"
+            "error": "It seems either your message or code is empty. Please fill both in so I know what you want to discuss!"
         }, 403
 
     try:
@@ -60,9 +62,18 @@ def send():
 
     if "message_history" not in session.keys():
         session["message_history"] = []
-    session["message_history"].append({"author": "user", "content": message})
+    session["message_history"].append({"author": "user", "content": user_message})
+
+    ai_instruction = (
+        f"First, read the user's latest message to understand their emotional state: '{user_message}'. "
+        "If they express frustration or confusion, your acknowledgement should reflect that before you analyze the code. "
+        "Then, analyze the user's code and their message together to provide an empathic response."
+    )
+
     message = EmpathicChatbotClient.Request(
-        message_history=session["message_history"], code=code
+        message_history=session["message_history"],
+        code=code,
+        instruction=ai_instruction,
     )
 
     response = client.respond(message)
@@ -100,12 +111,18 @@ def run():
         }, 403
     crunner = CRunner()
     crunner.execute_all(code)
-    message = f"This is if the code compiled successfully or not: {crunner.success}\n"
-    message += f"Heres the output from the code of the user: {crunner.output}\n"
+
+    ai_message = (
+        
+        "The user's code ran successfully or failed to compile. As an empathic tutor, please explain this error to the student in simple, encouraging terms. If it ran successfully, acknowledge their success"
+        "Otherwise, Acknowledge their effort and guide them to the solution. Avoid technical jargon. "
+        f"Here is the compilation error:\n{crunner.output}"
+    )
 
     if "message_history" not in session.keys():
         session["message_history"] = []
-    session["message_history"].append({"author": "user", "content": message})
+    # TODO: needs to be refined later since it registers as something the user typed; might confuse Mr. AI
+    session["message_history"].append({"author": "user", "content": ai_message})
     message = EmpathicChatbotClient.Request(
         message_history=session["message_history"], code=code
     )
