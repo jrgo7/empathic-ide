@@ -59,6 +59,9 @@ document
       body: JSON.stringify({ message: messageText, code: editorText }),
     };
     await addMessage("user", messageText);
+
+    const chatHistoryDiv = document.getElementById("chat-container");
+
     const response = await fetch("/code/send", config);
     const responseJson = await response.json();
 

@@ -39,7 +39,8 @@ class EmpathicChatbotClient:
                 "}\n"
                 "Use 'celebratory' sentiment for successful code execution. "
                 "Use 'encouraging' for errors or when the user is struggling. "
-                "Use 'inquisitive' when asking a clarifying question."
+                "Use 'inquisitive' when asking a clarifying question.\n"
+                "Please use line breaks to format your response to make it more readable."
             ),
             response_mime_type="application/json",
             response_schema=self.Response,
@@ -48,10 +49,33 @@ class EmpathicChatbotClient:
     def respond(self, message: Request) -> Response:
         print("RECEIVED REQUEST")
         print(message)
+        
+        contents: list[types.Content] = []
+        
+        # feel free to change this (message history stuff)
+        
+        # all history EXCEPT the last message first
+        for m in message.message_history[:-1]:
+            role = "user" if m["author"] == "user" else "model"
+            content = types.Content(role=role, parts=[types.Part(text=m["content"])])
+            contents.append(content)
+        
+        # build the LAST message with code and instruction
+        last_message = message.message_history[-1]
+        last_message_parts = [types.Part(text=last_message["content"])]
+        
+        if message.code:
+            last_message_parts.append(types.Part(text=f"\n\nCode:\n```\n{message.code}\n```"))
+        if message.instruction:
+            last_message_parts.append(types.Part(text=f"\n\nInstruction:\n{message.instruction}"))
+        
+        role = "user" if last_message["author"] == "user" else "model"
+        contents.append(types.Content(role=role, parts=last_message_parts))
+        
         response = self.client.models.generate_content(
             model=self.model,
             config=self.config,
-            contents=str(message),
+            contents=contents,
         )
         print("RECEIVED RESPONSE")
         print(response.parsed)

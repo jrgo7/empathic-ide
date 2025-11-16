@@ -6,8 +6,6 @@ import json
 from app.lib.gemini import EmpathicChatbotClient
 from app.lib.crunner import CRunner
 
-
-
 bp = Blueprint("code", __name__, url_prefix="/code")
 
 @bp.post("/api-key")
@@ -34,8 +32,7 @@ def get_api_key():
         return {"reply": config["GEMINI_API_KEY"]}
     except KeyError:
         return {"reply": ""}
-
-
+    
 @bp.post("/send")
 def send():
     """
@@ -44,7 +41,6 @@ def send():
     data = json.loads(request.data.decode())
     user_message = data["message"]
     code = data["code"]
-
     try:
         assert user_message != ""
         assert code != ""
@@ -52,31 +48,35 @@ def send():
         return {
             "error": "It seems either your message or code is empty. Please fill both in so I know what you want to discuss!"
         }, 403
-
     try:
         client = EmpathicChatbotClient()
     except AssertionError:
         return {
             "error": "It seems you did not set the Gemini API key. Please do so by clicking on the API Key button."
         }, 403
-
     if "message_history" not in session.keys():
         session["message_history"] = []
+    
     session["message_history"].append({"author": "user", "content": user_message})
-
+    
     ai_instruction = (
         f"First, read the user's latest message to understand their emotional state: '{user_message}'. "
         "If they express frustration or confusion, your acknowledgement should reflect that before you analyze the code. "
         "Then, analyze the user's code and their message together to provide an empathic response."
     )
-
     message = EmpathicChatbotClient.Request(
         message_history=session["message_history"],
         code=code,
         instruction=ai_instruction,
     )
-
     response = client.respond(message)
+    
+    ai_response_text = f"{response.acknowledgement} {response.supportive_suggestion}"
+    if response.error_explanation:
+        ai_response_text += f" {response.error_explanation}"
+    
+    session["message_history"].append({"author": "assistant", "content": ai_response_text})
+    session.modified = True
     return {"reply": response}
 
 
@@ -109,23 +109,31 @@ def run():
         return {
             "error": "It seems you did not set the Gemini API key. Please do so by clicking on the API Key button."
         }, 403
+    
     crunner = CRunner()
     crunner.execute_all(code)
-
+    
     ai_message = (
-        
-        "The user's code ran successfully or failed to compile. As an empathic tutor, please explain this error to the student in simple, encouraging terms. If it ran successfully, acknowledge their success"
-        "Otherwise, Acknowledge their effort and guide them to the solution. Avoid technical jargon. "
+        "The user's code ran successfully or failed to compile. As an empathic tutor, please explain this error to the student in simple, encouraging terms. If it ran successfully, acknowledge their success. "
+        "Otherwise, acknowledge their effort and guide them to the solution. Avoid technical jargon. "
         f"Here is the compilation error:\n{crunner.output}"
     )
-
+    
     if "message_history" not in session.keys():
         session["message_history"] = []
-    # TODO: needs to be refined later since it registers as something the user typed; might confuse Mr. AI
+    
     session["message_history"].append({"author": "user", "content": ai_message})
+    
     message = EmpathicChatbotClient.Request(
         message_history=session["message_history"], code=code
     )
-
     response = client.respond(message)
+    
+    ai_response_text = f"{response.acknowledgement} {response.supportive_suggestion}"
+    if response.error_explanation:
+        ai_response_text += f" {response.error_explanation}"
+    
+    session["message_history"].append({"author": "assistant", "content": ai_response_text})
+    session.modified = True  
+    
     return {"reply": response, "output": crunner.output}
