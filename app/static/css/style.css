@@ -212,8 +212,6 @@ button:hover {
 }
 
 button:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 .dark-theme button {
@@ -309,15 +307,9 @@ span.terminal-title {
     width: 16px;
     height: 16px;
     animation: spin 1s linear infinite;
-    display: inline-block;
-}
-
-.dark-theme .spinner {
-    border-left-color: var(--green-dark);
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
 }

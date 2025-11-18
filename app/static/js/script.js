@@ -4,6 +4,8 @@ require.config({
   },
 });
 
+fetch("/clearchat", { method: "POST" });
+
 require(["vs/editor/editor.main"], function () {
   const editorContainer = document.getElementById("editor");
   window.editor = monaco.editor.create(editorContainer, {
@@ -70,13 +72,19 @@ document
       return;
     }
 
-    const { acknowledgement, supportive_suggestion: supportiveSuggestion } =
-      responseJson.reply;
+    const {
+      acknowledgement,
+      supportive_suggestion: supportiveSuggestion,
+      error_explanation: errorExplanation,
+    } = responseJson.reply;
     console.log(responseJson);
     console.log(acknowledgement);
     console.log(supportiveSuggestion);
     await addMessage("bot", acknowledgement);
     await addMessage("bot", supportiveSuggestion);
+    if (errorExplanation) {
+      await addMessage("bot", errorExplanation);
+    }
   });
 
 const filePickerTypes = [
@@ -115,7 +123,7 @@ document
     const buttonText = runButton.querySelector(".button-text");
     const spinner = runButton.querySelector(".spinner");
 
-    buttonText.style.display = "none";
+    buttonText.style.opacity = "0";
     spinner.style.display = "inline-block";
     runButton.disabled = true;
 
@@ -132,17 +140,23 @@ document
         await addMessage("bot", responseJson.error);
         return;
       }
-      const { acknowledgement, supportive_suggestion: supportiveSuggestion } =
-        responseJson.reply;
+      const {
+        acknowledgement,
+        supportive_suggestion: supportiveSuggestion,
+        error_explanation: errorExplanation,
+      } = responseJson.reply;
       console.log(responseJson);
       console.log(acknowledgement);
       console.log(supportiveSuggestion);
       await addMessage("bot", acknowledgement);
       await addMessage("bot", supportiveSuggestion);
+      if (errorExplanation) {
+        await addMessage("bot", errorExplanation);
+      }
 
       await addToTerminal(responseJson.output);
     } finally {
-      buttonText.style.display = "inline-block";
+      buttonText.style.opacity = "1";
       spinner.style.display = "none";
       runButton.disabled = false;
     }
@@ -192,6 +206,6 @@ document
 document
   .querySelector("button#close-api-key-modal")
   .addEventListener("click", async function () {
-    modal = document.getElementById("modal-gemini-api-key");
+    const modal = document.getElementById("modal-gemini-api-key");
     modal.classList.remove("modal-visible");
   });
