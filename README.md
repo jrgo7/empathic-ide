@@ -21,4 +21,5 @@ convenience.
 ## Attributions
 
 * Ding sound effect from [Pixabay](https://pixabay.com/sound-effects/search/ding/?pagi=2)
+* Print sound effect from [Pixabay](https://pixabay.com/sound-effects/search/paper/?pagi=3)
 * Theme colors from [Catppuccin](https://catppuccin.com/palette/)

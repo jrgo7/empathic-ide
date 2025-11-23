@@ -66,6 +66,19 @@ p {
     margin-bottom: 1em;
 }
 
+.chat-message-content p {
+    margin: 0;
+}
+
+code {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--green);
+}
+
+.dark-theme code {
+    color: var(--green-dark);
+}
+
 a {
     color: var(--blue);
 }
@@ -253,6 +266,10 @@ button:disabled {
     margin-top: 1rem;
     font-family: monospace;
     flex-grow: 1;
+}
+
+pre#terminal-content {
+    line-height: 1.5em;
 }
 
 span.terminal-title {

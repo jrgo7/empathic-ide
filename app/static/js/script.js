@@ -4,7 +4,6 @@ require.config({
   },
 });
 
-
 fetch("/clearchat", { method: "POST" });
 
 require(["vs/editor/editor.main"], function () {
@@ -28,6 +27,7 @@ require(["vs/editor/editor.main"], function () {
 });
 
 const ding = new Audio('/static/sound/ding.mp3')
+const paper = new Audio('/static/sound/paper.mp3')
 let username;
 const BOT_NAME = "Ceci"
 const BOT_CHARS_PER_SEC = 200
@@ -69,7 +69,7 @@ async function addMessage(author, messageText) {
   const chatHistoryDiv = document.getElementById("chat-container");
   const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
   chatMessageDiv.querySelector(".chat-message-author").textContent = author;
-  chatMessageDiv.querySelector(".chat-message-content").innerHTML = window.marked.parse(messageText);
+  chatMessageDiv.querySelector(".chat-message-content").innerHTML = marked.parse(messageText);
   if (author === BOT_NAME) {
     const typingDuration = clamp(messageText.length / BOT_CHARS_PER_SEC * 1000, 0.1, 2000);
     console.log(typingDuration)
@@ -84,14 +84,59 @@ async function addMessage(author, messageText) {
 }
 
 /**
+ * Split messageText by sentence and send each to the chatbot UI
+ * @param {string} author 
+ * @param {string} messageText 
+ */
+async function addMessageSplitSentences(author, messageText) {
+  if (!messageText) return;
+
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    try {
+      const seg = new Intl.Segmenter(undefined, { granularity: 'sentence' }); // undefined = current locale
+      for (const { segment } of seg.segment(messageText)) {
+        const s = segment.trim();
+        if (s) await addMessage(author, s);
+      }
+      return;
+    } catch (e) {
+      console.warn('Intl.Segmenter failed, falling back to regex splitter', e);
+    }
+  } else {
+    // If Intl.Segmenter is unsupported (shouldn't be), just send the whole message.
+    await addMessage(author, messageText.trim());
+  }
+}
+
+
+async function addChatbotMessages(responseJson) {
+  const {
+    acknowledgement,
+    supportive_suggestion: supportiveSuggestion,
+    error_explanation: errorExplanation,
+  } = responseJson.reply;
+
+  console.log(responseJson);
+  console.log(acknowledgement);
+  console.log(supportiveSuggestion);
+  await addMessageSplitSentences(BOT_NAME, acknowledgement);
+  await addMessageSplitSentences(BOT_NAME, supportiveSuggestion);
+  if (errorExplanation) {
+    await addMessageSplitSentences(BOT_NAME, errorExplanation);
+  }
+}
+
+/**
  * Add a line of content to the terminal
  * @param {string} content The content to add
  */
 async function addToTerminal(content) {
   const terminal = document.getElementById("terminal-content");
+  paper.play();
   if (Array.isArray(content)) {
     content.forEach((line) => {
       terminal.textContent += line + "\n";
+      sleep(10);
     });
   } else if (typeof content === "string") {
     terminal.textContent += content + "\n";
@@ -165,7 +210,6 @@ document
     };
     await addMessage(username, messageText);
 
-    const chatHistoryDiv = document.getElementById("chat-container");
     showTypingIndicator();
     const response = await fetch("/code/send", config);
     const responseJson = await response.json();
@@ -177,19 +221,7 @@ document
       return;
     }
 
-    const {
-      acknowledgement,
-      supportive_suggestion: supportiveSuggestion,
-      error_explanation: errorExplanation,
-    } = responseJson.reply;
-    console.log(responseJson);
-    console.log(acknowledgement);
-    console.log(supportiveSuggestion);
-    await addMessage(BOT_NAME, acknowledgement);
-    await addMessage(BOT_NAME, supportiveSuggestion);
-    if (errorExplanation) {
-      await addMessage(BOT_NAME, errorExplanation);
-    }
+    await addChatbotMessages(responseJson);
     enableSendButton();
   });
 
@@ -241,30 +273,20 @@ document
       const responseJson = await response.json();
 
       if (response.status == 403) {
-        await addMessage(BOT_NAME, responseJson.error);
+        await addMessageSplitSentences(BOT_NAME, responseJson.error);
         return;
-      }
-      const {
-        acknowledgement,
-        supportive_suggestion: supportiveSuggestion,
-        error_explanation: errorExplanation,
-      } = responseJson.reply;
-      console.log(responseJson);
-      console.log(acknowledgement);
-      console.log(supportiveSuggestion);
-      await addMessage(BOT_NAME, acknowledgement);
-      await addMessage(BOT_NAME, supportiveSuggestion);
-      if (errorExplanation) {
-        await addMessage(BOT_NAME, errorExplanation);
       }
 
       await addToTerminal(responseJson.output);
+      await addChatbotMessages(responseJson);
+
     } finally {
       buttonText.style.opacity = "1";
       spinner.style.display = "none";
       runButton.disabled = false;
     }
   });
+
 
 document
   .querySelector("button#set-api-key")

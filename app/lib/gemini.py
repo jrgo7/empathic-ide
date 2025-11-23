@@ -40,7 +40,6 @@ class EmpathicChatbotClient:
                 "Use 'celebratory' sentiment for successful code execution. "
                 "Use 'encouraging' for errors or when the user is struggling. "
                 "Use 'inquisitive' when asking a clarifying question.\n"
-                "Please use line breaks to format your response to make it more readable."
             ),
             response_mime_type="application/json",
             response_schema=self.Response,
