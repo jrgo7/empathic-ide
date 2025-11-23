@@ -94,12 +94,34 @@ const filePickerTypes = [
   },
 ];
 
+function supportsFileSystemAccess() {
+  try {
+    return "showOpenFilePicker" in window && window.self === window.top;
+  } catch {
+    return false;
+  }
+}
+
+async function openFilePicker(opts) {
+  if (supportsFileSystemAccess()) {
+    return await window.showOpenFilePicker(opts)
+  } else {
+    alert("Unfortunately, we only support Chromium-based browsers.");
+  }
+}
+
+async function saveFilePicker(opts) {
+  if (supportsFileSystemAccess()) {
+    return await window.showSaveFilePicker(opts)
+  } else {
+    alert("Unfortunately, we only support Chromium-based browsers.");
+  }
+}
+
 document
   .querySelector("button#open")
   .addEventListener("click", async function () {
-    const [fileHandle] = await window.showOpenFilePicker({
-      types: filePickerTypes,
-    });
+    const [fileHandle] = await openFilePicker({ types: filePickerTypes });
     const file = await fileHandle.getFile();
     const content = await file.text();
     window.editor.setValue(content);
@@ -109,7 +131,7 @@ document
   .querySelector("button#save")
   .addEventListener("click", async function () {
     const editorText = window.editor.getValue();
-    const handle = await showSaveFilePicker({ types: filePickerTypes });
+    const handle = await saveFilePicker({ types: filePickerTypes });
     const blob = new Blob([editorText]);
     const writableStream = await handle.createWritable();
     await writableStream.write(blob);
@@ -209,3 +231,11 @@ document
     const modal = document.getElementById("modal-gemini-api-key");
     modal.classList.remove("modal-visible");
   });
+
+if (!supportsFileSystemAccess()) {
+  alert("We have detected that you are running on a non-Chromium-based browser."
+    + " Unfortunately, we currently only support Chromium-based browsers like"
+    + " Google Chrome or Microsoft Edge. You will experience errors when saving"
+    + " and opening files otherwise."
+  )
+}
