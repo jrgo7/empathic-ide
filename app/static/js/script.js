@@ -28,7 +28,7 @@ require(["vs/editor/editor.main"], function () {
 
 const ding = new Audio('/static/sound/ding.mp3')
 let username;
-const BOT_NAME = "Cece"
+const BOT_NAME = "Ceci"
 const BOT_CHARS_PER_SEC = 200
 
 /**
@@ -345,5 +345,5 @@ document.addEventListener('DOMContentLoaded', function () {
     )
   }
   openModal('modal-input-name');
-  addMessage(BOT_NAME, "Hello! I'm Cece, your helpful CCPROG1 tutoring bot. What are we doing today?");
+  addMessage(BOT_NAME, `Hello! I'm ${BOT_NAME}, your helpful CCPROG1 tutoring bot. What are we doing today?`);
 });
