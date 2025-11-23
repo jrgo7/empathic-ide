@@ -34,18 +34,14 @@
         <div class="flex-row">
             <div id="chat">
                 <div id="chat-container">
-                    <div class="chat-message">
-                        <div class="chat-message-author">Bot</div>
-                        <div class="chat-message-content">
-                            Hello! I am Empathicide, your helpful CCPROG1 tutoring bot.
-                        </div>
-                    </div>
                 </div>
-                <div class="spacer"></div>
+                <div class="spacer" id="typing-indicator">
+                </div>
                 <div class="enter-message">
                     <textarea class="enter-message-textarea" id="message-textarea"></textarea>
                     <button id="send">Send</button>
                     <button id="open-api-key-modal">API Key</button>
+                    <button id="open-name-modal">Name</button>
                 </div>
             </div>
             <div id="program">
@@ -72,6 +68,14 @@
             <button id="set-api-key">Set API Key</button>
             <p>You may need to create a new project first.</p>
             <p>Any name can work for the project and the key -- "Empathic IDE" would work best, though!</p>
+        </div>
+    </div>
+    <div id="modal-input-name" class="modal">
+        <div class="modal-content">
+            <h2>Enter your name</h2>
+            <p>Name</p>
+            <input type="text" name="name" id="name">
+            <button id="close-name-modal">Done</button>
         </div>
     </div>
     <template id="template-chat-message">

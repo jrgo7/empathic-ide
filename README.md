@@ -15,3 +15,10 @@ Ensure that `uv` is installed. Then, activate the virtual environment, and:
 
 This command is also provided in a `run.bat` and `run.sh` script for
 convenience.
+
+---
+
+## Attributions
+
+* Ding sound effect from [Pixabay](https://pixabay.com/sound-effects/search/ding/?pagi=2)
+* Theme colors from [Catppuccin](https://catppuccin.com/palette/)

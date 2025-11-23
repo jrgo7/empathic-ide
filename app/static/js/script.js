@@ -27,6 +27,19 @@ require(["vs/editor/editor.main"], function () {
 });
 
 const ding = new Audio('/static/sound/ding.mp3')
+let username;
+const BOT_NAME = "Cece"
+const BOT_CHARS_PER_SEC = 200
+
+/**
+ * @param {number} n 
+ * @param {number} minimum 
+ * @param {number} maximum 
+ * @returns n itself, or minimum if it is smaller than it, or maximum if it is larger than it
+ */
+function clamp(n, minimum, maximum) {
+  return Math.max(Math.min(n, maximum), minimum);
+}
 
 /**
  * Sleep for a specified amount of milliseconds. This is used to humanize the
@@ -35,6 +48,14 @@ const ding = new Audio('/static/sound/ding.mp3')
  */
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function showTypingIndicator() {
+  document.getElementById('typing-indicator').textContent = "Cece is typing..."
+}
+
+function hideTypingIndicator() {
+  document.getElementById('typing-indicator').textContent = ""
 }
 
 /**
@@ -48,7 +69,16 @@ async function addMessage(author, messageText) {
   const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
   chatMessageDiv.querySelector(".chat-message-author").textContent = author;
   chatMessageDiv.querySelector(".chat-message-content").textContent = messageText;
-  ding.play();
+  if (author === BOT_NAME) {
+    const typingDuration = clamp(messageText.length / BOT_CHARS_PER_SEC * 1000, 0.1, 2000);
+    console.log(typingDuration)
+    showTypingIndicator();
+    await sleep(typingDuration);
+    hideTypingIndicator();
+    ding.play();
+  } else {
+    ding.play();
+  }
   chatHistoryDiv.appendChild(chatMessageDiv);
 }
 
@@ -110,6 +140,16 @@ async function saveFilePicker(opts) {
   }
 }
 
+function disableSendButton() {
+  btn = document.querySelector("button#send");
+  btn.disabled = true;
+}
+
+function enableSendButton() {
+  btn = document.querySelector("button#send");
+  btn.disabled = false;
+}
+
 document
   .querySelector("button#send")
   .addEventListener("click", async function () {
@@ -117,19 +157,22 @@ document
     const textarea = document.querySelector("textarea#message-textarea");
     const messageText = textarea.value;
     textarea.value = "";
+    disableSendButton();
     const config = {
       method: "POST",
       body: JSON.stringify({ message: messageText, code: editorText }),
     };
-    await addMessage("user", messageText);
+    await addMessage(username, messageText);
 
     const chatHistoryDiv = document.getElementById("chat-container");
-
+    showTypingIndicator();
     const response = await fetch("/code/send", config);
     const responseJson = await response.json();
+    hideTypingIndicator();
 
     if (response.status == 403) {
-      await addMessage("bot", responseJson.error);
+      await addMessage(BOT_NAME, responseJson.error);
+      enableSendButton();
       return;
     }
 
@@ -141,11 +184,12 @@ document
     console.log(responseJson);
     console.log(acknowledgement);
     console.log(supportiveSuggestion);
-    await addMessage("bot", acknowledgement);
-    await addMessage("bot", supportiveSuggestion);
+    await addMessage(BOT_NAME, acknowledgement);
+    await addMessage(BOT_NAME, supportiveSuggestion);
     if (errorExplanation) {
-      await addMessage("bot", errorExplanation);
+      await addMessage(BOT_NAME, errorExplanation);
     }
+    enableSendButton();
   });
 
 const filePickerTypes = [
@@ -196,7 +240,7 @@ document
       const responseJson = await response.json();
 
       if (response.status == 403) {
-        await addMessage("bot", responseJson.error);
+        await addMessage(BOT_NAME, responseJson.error);
         return;
       }
       const {
@@ -207,10 +251,10 @@ document
       console.log(responseJson);
       console.log(acknowledgement);
       console.log(supportiveSuggestion);
-      await addMessage("bot", acknowledgement);
-      await addMessage("bot", supportiveSuggestion);
+      await addMessage(BOT_NAME, acknowledgement);
+      await addMessage(BOT_NAME, supportiveSuggestion);
       if (errorExplanation) {
-        await addMessage("bot", errorExplanation);
+        await addMessage(BOT_NAME, errorExplanation);
       }
 
       await addToTerminal(responseJson.output);
@@ -243,6 +287,16 @@ document
     terminal.textContent = "";
   });
 
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.add("modal-visible");
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  modal.classList.remove("modal-visible");
+}
+
 document
   .querySelector("button#open-api-key-modal")
   .addEventListener("click", async function () {
@@ -269,10 +323,27 @@ document
     modal.classList.remove("modal-visible");
   });
 
-if (!supportsFileSystemAccess()) {
-  alert("We have detected that you are running on a non-Chromium-based browser."
-    + " Unfortunately, we currently only support Chromium-based browsers like"
-    + " Google Chrome or Microsoft Edge. You will experience errors when saving"
-    + " and opening files otherwise."
-  )
-}
+
+document
+  .querySelector("button#open-name-modal")
+  .addEventListener("click", () => openModal('modal-input-name'));
+
+document
+  .querySelector("button#close-name-modal")
+  .addEventListener("click", () => {
+    username = document.querySelector("input#name").value;
+    closeModal('modal-input-name');
+  });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  if (!supportsFileSystemAccess()) {
+    alert("We have detected that you are running on a non-Chromium-based browser."
+      + " Unfortunately, we currently only support Chromium-based browsers like"
+      + " Google Chrome or Microsoft Edge. You will experience errors when saving"
+      + " and opening files otherwise."
+    )
+  }
+  openModal('modal-input-name');
+  addMessage(BOT_NAME, "Hello! I'm Cece, your helpful CCPROG1 tutoring bot. What are we doing today?");
+});

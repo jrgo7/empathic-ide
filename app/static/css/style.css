@@ -155,7 +155,7 @@ main {
     width: 100%;
     border: 0;
     border-radius: 8px;
-    padding: 16px 0;
+    padding: 16px 1ch;
     margin-bottom: 1rem;
     resize: none;
     font-family: sans-serif;
@@ -179,7 +179,7 @@ input[type=text] {
     border-radius: 8px;
     margin-top: 1em;
     margin-bottom: 1em;
-    padding: 1em 0ch;
+    padding: 1em 1ch;
     color: var(--text);
     background-color: var(--base);
 }
@@ -203,20 +203,28 @@ button {
     background-color: var(--base);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-button:active {
+button:active {}
+
+button:disabled {
+    color: var(--overlay-0);
+    background-color: var(--surface-0);
 }
 
 .dark-theme button {
     color: var(--text-dark);
     background-color: var(--base-dark);
+}
+
+.dark-theme button:disabled {
+    color: var(--mantle-dark);
 }
 
 .spacer {
