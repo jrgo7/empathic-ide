@@ -26,17 +26,36 @@ require(["vs/editor/editor.main"], function () {
   monaco.editor.setTheme("catppuccin-latte");
 });
 
+const ding = new Audio('/static/sound/ding.mp3')
+
+/**
+ * Sleep for a specified amount of milliseconds. This is used to humanize the
+ * chatbot a little more e.g. to delay responses for a bit.
+ * @param {number} ms How long to sleep for, in milliseconds
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Add a message to the chatbot user interface.
+ * @param {string} author The author of the message
+ * @param {string} messageText The content of the message
+ */
 async function addMessage(author, messageText) {
   const chatMessageTemplate = document.getElementById("template-chat-message");
   const chatHistoryDiv = document.getElementById("chat-container");
   const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
   chatMessageDiv.querySelector(".chat-message-author").textContent = author;
-  chatMessageDiv.querySelector(".chat-message-content").textContent =
-    messageText;
-  // const spacerDiv = chatHistoryDiv.querySelector('.spacer');
+  chatMessageDiv.querySelector(".chat-message-content").textContent = messageText;
+  ding.play();
   chatHistoryDiv.appendChild(chatMessageDiv);
 }
 
+/**
+ * Add a line of content to the terminal
+ * @param {string} content The content to add
+ */
 async function addToTerminal(content) {
   const terminal = document.getElementById("terminal-content");
   if (Array.isArray(content)) {
@@ -47,6 +66,48 @@ async function addToTerminal(content) {
     terminal.textContent += content + "\n";
   }
   terminal.scrollTop = terminal.scrollHeight;
+}
+
+/**
+ * Determine if the current browser context soupports file system access
+ * functions, e.g. window.showOpenFilePicker() and window.showSaveFilePicker().
+ * The MDN docs suggest only Chromium-based browsers support these as of
+ * 2025-11-23.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker
+ * @returns {boolean} Whether or not the browser supports file system access
+ */
+function supportsFileSystemAccess() {
+  try {
+    return "showOpenFilePicker" in window && window.self === window.top;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Open a file by selecting it from the file picker
+ * @param {{}} opts Options, like what types to accept.
+ * @returns A file handler that lets users access a file's contents
+ */
+async function openFilePicker(opts) {
+  if (supportsFileSystemAccess()) {
+    return await window.showOpenFilePicker(opts)
+  } else {
+    alert("Unfortunately, we only support Chromium-based browsers.");
+  }
+}
+
+/**
+ * Save a file by selecting where to save it to from the file picker
+ * @param {{}} opts Options, like what types to accept.
+ * @returns A file handler that lets users write a file's contents
+ */
+async function saveFilePicker(opts) {
+  if (supportsFileSystemAccess()) {
+    return await window.showSaveFilePicker(opts)
+  } else {
+    alert("Unfortunately, we only support Chromium-based browsers.");
+  }
 }
 
 document
@@ -93,30 +154,6 @@ const filePickerTypes = [
     accept: { "text/plain": [".c"] },
   },
 ];
-
-function supportsFileSystemAccess() {
-  try {
-    return "showOpenFilePicker" in window && window.self === window.top;
-  } catch {
-    return false;
-  }
-}
-
-async function openFilePicker(opts) {
-  if (supportsFileSystemAccess()) {
-    return await window.showOpenFilePicker(opts)
-  } else {
-    alert("Unfortunately, we only support Chromium-based browsers.");
-  }
-}
-
-async function saveFilePicker(opts) {
-  if (supportsFileSystemAccess()) {
-    return await window.showSaveFilePicker(opts)
-  } else {
-    alert("Unfortunately, we only support Chromium-based browsers.");
-  }
-}
 
 document
   .querySelector("button#open")
