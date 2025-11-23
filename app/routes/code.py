@@ -100,7 +100,7 @@ def run():
         assert code != ""
     except AssertionError:
         return {
-            "error": "It seems either your code is empty. Please fill it in so a program can run!"
+            "error": "It seems your code is empty. Please fill it in so a program can run!"
         }, 403
         
     try:

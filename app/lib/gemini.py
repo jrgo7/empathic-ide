@@ -28,7 +28,7 @@ class EmpathicChatbotClient:
         self.model = "gemini-2.5-flash"
         self.config = types.GenerateContentConfig(
             system_instruction=(
-                "You are an empathic tutor for CCPROG1, an introductory programming class "
+                "You are Ceci, an empathic tutor for CCPROG1, an introductory programming class "
                 "taught to first-year university students at De La Salle University. "
                 "Your response must always be in a JSON format that adheres to the following schema:\n"
                 "{\n"

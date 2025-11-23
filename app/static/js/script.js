@@ -4,6 +4,7 @@ require.config({
   },
 });
 
+
 fetch("/clearchat", { method: "POST" });
 
 require(["vs/editor/editor.main"], function () {
@@ -68,7 +69,7 @@ async function addMessage(author, messageText) {
   const chatHistoryDiv = document.getElementById("chat-container");
   const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
   chatMessageDiv.querySelector(".chat-message-author").textContent = author;
-  chatMessageDiv.querySelector(".chat-message-content").textContent = messageText;
+  chatMessageDiv.querySelector(".chat-message-content").innerHTML = window.marked.parse(messageText);
   if (author === BOT_NAME) {
     const typingDuration = clamp(messageText.length / BOT_CHARS_PER_SEC * 1000, 0.1, 2000);
     console.log(typingDuration)
