@@ -26,11 +26,12 @@ require(["vs/editor/editor.main"], function () {
   monaco.editor.setTheme("catppuccin-latte");
 });
 
-const ding = new Audio('/static/sound/ding.mp3')
-const paper = new Audio('/static/sound/paper.mp3')
+const decide = new Audio('/static/sound/decide.wav')
+const ding = new Audio('/static/sound/ding.wav')
+const paper = new Audio('/static/sound/paper.wav')
 let username;
 const BOT_NAME = "Ceci"
-const BOT_CHARS_PER_SEC = 200
+const BOT_CHARS_PER_SEC = 100
 
 /**
  * @param {number} n 
@@ -70,7 +71,7 @@ async function addMessage(author, messageText) {
   const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
   chatMessageDiv.querySelector(".chat-message-author").textContent = author;
   chatMessageDiv.querySelector(".chat-message-content").innerHTML = marked.parse(messageText);
-  if (author === BOT_NAME) {
+  if (author === BOT_NAME || author === "") {
     const typingDuration = clamp(messageText.length / BOT_CHARS_PER_SEC * 1000, 0.1, 2000);
     console.log(typingDuration)
     showTypingIndicator();
@@ -81,6 +82,15 @@ async function addMessage(author, messageText) {
     ding.play();
   }
   chatHistoryDiv.appendChild(chatMessageDiv);
+}
+
+async function addSystemMessage(messageText) {
+  const chatMessageTemplate = document.getElementById("template-system-message");
+  const chatHistoryDiv = document.getElementById("chat-container");
+  const chatMessageDiv = chatMessageTemplate.content.cloneNode(true);
+  chatMessageDiv.querySelector(".chat-message").innerHTML = marked.parse(messageText);
+  chatHistoryDiv.appendChild(chatMessageDiv);
+  decide.play();
 }
 
 /**
@@ -96,7 +106,10 @@ async function addMessageSplitSentences(author, messageText) {
       const seg = new Intl.Segmenter(undefined, { granularity: 'sentence' }); // undefined = current locale
       for (const { segment } of seg.segment(messageText)) {
         const s = segment.trim();
-        if (s) await addMessage(author, s);
+        if (s) {
+          await addMessage(author, s);
+          author = "" // hide the author for succeeding messages
+        };
       }
       return;
     } catch (e) {
@@ -111,19 +124,11 @@ async function addMessageSplitSentences(author, messageText) {
 
 async function addChatbotMessages(responseJson) {
   const {
-    acknowledgement,
-    supportive_suggestion: supportiveSuggestion,
-    error_explanation: errorExplanation,
+    response
   } = responseJson.reply;
 
   console.log(responseJson);
-  console.log(acknowledgement);
-  console.log(supportiveSuggestion);
-  await addMessageSplitSentences(BOT_NAME, acknowledgement);
-  await addMessageSplitSentences(BOT_NAME, supportiveSuggestion);
-  if (errorExplanation) {
-    await addMessageSplitSentences(BOT_NAME, errorExplanation);
-  }
+  await addMessageSplitSentences(BOT_NAME, response);
 }
 
 /**
@@ -262,6 +267,8 @@ document
     buttonText.style.opacity = "0";
     spinner.style.display = "inline-block";
     runButton.disabled = true;
+
+    await addSystemMessage(`*${username} attempted compiling and running*`);
 
     try {
       const editorText = window.editor.getValue();

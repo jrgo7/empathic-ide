@@ -71,12 +71,11 @@ def send():
     )
     response = client.respond(message)
     
-    ai_response_text = f"{response.acknowledgement} {response.supportive_suggestion}"
-    if response.error_explanation:
-        ai_response_text += f" {response.error_explanation}"
-    
+    ai_response_text = f"{response}"
+
     session["message_history"].append({"author": "assistant", "content": ai_response_text})
     session.modified = True
+    
     return {"reply": response}
 
 
@@ -129,9 +128,7 @@ def run():
     )
     response = client.respond(message)
     
-    ai_response_text = f"{response.acknowledgement} {response.supportive_suggestion}"
-    if response.error_explanation:
-        ai_response_text += f" {response.error_explanation}"
+    ai_response_text = f"{response.response}"
     
     session["message_history"].append({"author": "assistant", "content": ai_response_text})
     session.modified = True  

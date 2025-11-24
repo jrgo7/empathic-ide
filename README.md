@@ -20,6 +20,5 @@ convenience.
 
 ## Attributions
 
-* Ding sound effect from [Pixabay](https://pixabay.com/sound-effects/search/ding/?pagi=2)
-* Print sound effect from [Pixabay](https://pixabay.com/sound-effects/search/paper/?pagi=3)
+* Sound effects from [Spriters' Resource](https://sounds.spriters-resource.com/nintendo_switch/supermariomaker2/asset/417435/)
 * Theme colors from [Catppuccin](https://catppuccin.com/palette/)

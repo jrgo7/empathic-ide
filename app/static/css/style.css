@@ -66,6 +66,10 @@ p {
     margin-bottom: 1em;
 }
 
+em {
+    font-style: italic;
+}
+
 .chat-message-content p {
     margin: 0;
 }
@@ -179,6 +183,33 @@ main {
 .dark-theme .enter-message-textarea {
     color: var(--text-dark);
     background-color: var(--base-dark);
+}
+
+.system-message * {
+    text-align: center;
+    overflow: hidden;
+}
+
+.system-message *::before,
+.system-message *::after {
+    background-color: #000;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+}
+
+
+.system-message *::before {
+    right: 0.5em;
+    margin-left: -50%;
+}
+
+.system-message *::after {
+    left: 0.5em;
+    margin-right: -50%;
 }
 
 label {
