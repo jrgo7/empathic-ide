@@ -36,16 +36,21 @@ class CRunner:
         self.exe_path = exe_path
         return True
 
-    def run(self, args: list[str] = []):
+    def run(self, args: list[str] = [], input_text: str = ""):
         self.output = []
 
         if not self.compile():
             return
 
+        cmd = [self.exe_path] + args
+
+        print(f"{input_text = }")
+
         result = subprocess.run(
-            [self.exe_path] + args,
+            cmd,
             capture_output=True,
-            text=True
+            text=True,
+            input=input_text
         )
 
         self.output.extend(result.stdout.splitlines())
@@ -56,10 +61,10 @@ class CRunner:
         if self.tmp_dir and os.path.exists(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
             
-    def execute_all(self, c_source: str, args: list[str] = []):
+    def execute_all(self, c_source: str, args: list[str] = [], input_text: str = ""):
         self.load_c(c_source)
         self.compile()
-        self.run(args)
+        self.run(args, input_text)
         self.cleanup()
 
 if __name__ == "__main__":

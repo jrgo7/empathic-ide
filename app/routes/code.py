@@ -96,6 +96,8 @@ def run():
     data = json.loads(request.get_data().decode())
     code = data["code"]
     args = data["args"]
+    input_text = data["inputText"]
+    print(f"{data = }\n{input_text = }")
     try:
         assert code != ""
     except AssertionError:
@@ -109,9 +111,9 @@ def run():
         return {
             "error": "It seems you did not set the Gemini API key. Please do so by clicking on the API Key button."
         }, 403
-    
+     
     crunner = CRunner()
-    crunner.execute_all(code, args)
+    crunner.execute_all(code, args, input_text)
     
     ai_message = (
         "The user's code ran successfully or failed to compile. As an empathic tutor, please explain this error to the student in simple, encouraging terms. If it ran successfully, acknowledge their success. "

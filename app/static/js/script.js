@@ -265,6 +265,8 @@ document
     const spinner = runButton.querySelector(".spinner");
 
     const argsTextarea = document.getElementById("args");
+    const inputText = document.getElementById("program-input").value;
+    console.log(`input text is ${inputText}`);
 
     buttonText.style.opacity = "0";
     spinner.style.display = "inline-block";
@@ -277,7 +279,7 @@ document
       const args = argsText.split(" ")
       const config = {
         method: "POST",
-        body: JSON.stringify({ code: editorText, args: args }),
+        body: JSON.stringify({ code: editorText, args, inputText }),
       };
       const response = await fetch("/code/run", config);
       const responseJson = await response.json();
