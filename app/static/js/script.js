@@ -220,7 +220,7 @@ document
     const responseJson = await response.json();
     hideTypingIndicator();
 
-    if (response.status == 403) {
+    if (response.status == 403 || response.status == 500) {
       await addMessage(BOT_NAME, responseJson.error);
       enableSendButton();
       return;
@@ -279,7 +279,7 @@ document
       const response = await fetch("/code/run", config);
       const responseJson = await response.json();
 
-      if (response.status == 403) {
+      if (response.status == 403 || response.status == 500) {
         await addMessageSplitSentences(BOT_NAME, responseJson.error);
         return;
       }

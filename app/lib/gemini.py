@@ -3,7 +3,7 @@ from google.genai import types
 import dotenv
 from dataclasses import dataclass, field
 from typing import Literal
-from system_instruction import SYSTEM_INSTRUCTION
+from app.lib.system_instruction import SYSTEM_INSTRUCTION
 
 class EmpathicChatbotClient:
 
