@@ -95,6 +95,7 @@ def run():
     """
     data = json.loads(request.get_data().decode())
     code = data["code"]
+    args = data["args"]
     try:
         assert code != ""
     except AssertionError:
@@ -110,12 +111,13 @@ def run():
         }, 403
     
     crunner = CRunner()
-    crunner.execute_all(code)
+    crunner.execute_all(code, args)
     
     ai_message = (
         "The user's code ran successfully or failed to compile. As an empathic tutor, please explain this error to the student in simple, encouraging terms. If it ran successfully, acknowledge their success. "
         "Otherwise, acknowledge their effort and guide them to the solution. Avoid technical jargon. "
-        f"Here is the compilation error:\n{crunner.output}"
+        f"Here are the args added to the compilation:{args}\n"
+        f"Here is the compilation result or error:\n{crunner.output}"
     )
     
     if "message_history" not in session.keys():

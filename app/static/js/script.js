@@ -264,17 +264,20 @@ document
     const buttonText = runButton.querySelector(".button-text");
     const spinner = runButton.querySelector(".spinner");
 
+    const argsTextarea = document.getElementById("args");
+
     buttonText.style.opacity = "0";
     spinner.style.display = "inline-block";
     runButton.disabled = true;
 
     await addSystemMessage(`*${username} attempted compiling and running*`);
-
     try {
       const editorText = window.editor.getValue();
+      const argsText = argsTextarea.value;
+      const args = argsText.split(" ")
       const config = {
         method: "POST",
-        body: JSON.stringify({ code: editorText }),
+        body: JSON.stringify({ code: editorText, args: args }),
       };
       const response = await fetch("/code/run", config);
       const responseJson = await response.json();
