@@ -53,7 +53,7 @@ function sleep(ms) {
 }
 
 function showTypingIndicator() {
-  document.getElementById('typing-indicator').textContent = "Cece is typing..."
+  document.getElementById('typing-indicator').textContent = `${BOT_NAME} is typing...`
 }
 
 function hideTypingIndicator() {

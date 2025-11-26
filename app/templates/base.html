@@ -23,6 +23,7 @@
         <hgroup id="top-bar">
             <h1>Ceci</h1>
             <div class="spacer"></div>
+            <button id="open-name-modal">Name</button>
             <button id="toggle-theme">Toggle Theme</button>
             <button id="open">Open</button>
             <button id="save">Save</button>
@@ -30,7 +31,6 @@
                 <span class="button-text">Compile and Run</span>
                 <span class="spinner"></span>
             </button>
-            <button id="clear-console">Clear Console</button>
         </hgroup>
         <div class="flex-row">
             <div id="chat">
@@ -40,25 +40,30 @@
                 </div>
                 <div class="enter-message">
                     <textarea class="enter-message-textarea" id="message-textarea"></textarea>
-                    <button id="send">Send</button>
-                    <button id="open-api-key-modal">API Key</button>
-                    <button id="open-name-modal">Name</button>
+                    <menu>
+                        <button id="send">Send</button>
+                        <button id="open-api-key-modal">API Key</button>
+                    </menu>
                 </div>
             </div>
             <div id="program">
                 <div id="editor">
                 </div>
+            </div>
+            <div id="io">
+                <label for="args">Arguments</label>
+                <div class="args">
+                    <textarea class="enter-message-textarea" id="args" name="args"></textarea>
+                </div>
+                <label for="program-input">Input</label>
+                <div class="input">
+                    <textarea class="enter-message-textarea" id="program-input" name="program-input"></textarea>
+                </div>
+                <label for="terminal-content">Output</label>
                 <div id="terminal">
-                    <pre id="terminal-content"></pre>
+                    <pre id="terminal-content" name="terminal-content"></pre>
                 </div>
-                <div>
-                    <label for="args">Args</label>
-                    <textarea class="enter-message-textarea" id="args"></textarea>
-                </div>
-                <div>
-                    <label for="program-input">Input</label>
-                    <textarea class="enter-message-textarea" id="program-input"></textarea>
-                </div>
+                <button id="clear-console">Clear Output</button>
             </div>
         </div>
         </div>

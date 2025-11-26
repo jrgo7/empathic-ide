@@ -37,13 +37,15 @@
     --overlay-0-dark: #737994;
     --mantle-dark: #292c3c;
     --crust-dark: #232634;
+
+    box-sizing: border-box;
 }
 
 body {
     font-family: "Inter", sans-serif;
     height: 100vh;
     overflow-y: hidden;
-
+    overflow-x: hidden;
     color: var(--text);
     background-color: var(--crust);
 }
@@ -173,6 +175,7 @@ main {
     border: 0;
     border-radius: 8px;
     padding: 16px 1ch;
+    margin: 0;
     margin-bottom: 1rem;
     resize: none;
     font-family: sans-serif;
@@ -276,20 +279,26 @@ button:disabled {
 }
 
 #program {
-    width: 70%;
-    margin-right: 1ch;
+    width:80ch;
     display: flex;
     flex-direction: column;
+    margin-left: 1ch;
+    margin-right: 1ch;
 }
 
 #editor {
     width: 100%;
     display: flex;
-    flex-direction: column;
     margin: auto;
-    max-height: 70vh;
-    margin-right: 1ch;
+    max-height: 90%;
     flex-grow: 1;
+}
+
+#io {
+    width: 30%;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
 }
 
 #terminal {
@@ -368,4 +377,13 @@ span.terminal-title {
     left: 50%;
     transform: translate(-50%, -50%);
     display: none;
+}
+
+menu {
+    display: flex;
+}
+
+menu button {
+    flex-grow: 1;
+    margin-left: 1ch
 }
