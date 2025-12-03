@@ -7,6 +7,11 @@
 * Roemer Gabriel Caliboso
 * Aaron Daniel Go
 
+## Links
+
+* This repository: [[https://github.com/jrgo7/empathic-ide]]
+* Additional analysis: [[https://github.com/jrgo7/eda-empathic-ide]]
+
 ## Installation and run script
 
 Ensure that `uv` is installed. Then, activate the virtual environment, and:

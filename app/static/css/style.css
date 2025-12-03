@@ -279,7 +279,7 @@ button:disabled {
 }
 
 #program {
-    width:80ch;
+    width:40%;
     display: flex;
     flex-direction: column;
     margin-left: 1ch;
